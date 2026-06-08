@@ -8,4 +8,6 @@ public static class PhysicsHandler
     {
         _colliders.Add(collider);
     }
+
+    public static HashSet<Collider> GetColliders() => _colliders;
 }
