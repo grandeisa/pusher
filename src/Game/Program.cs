@@ -1,5 +1,6 @@
-﻿using Raylib_cs;
-using System.Threading;
+﻿using Game.Core;
+using Raylib_cs;
+namespace Game;
 
 static class Game
 {
@@ -79,5 +80,16 @@ static class Game
             Raylib.DrawFPS(0, 0);
 
         Raylib.EndDrawing();
+    }
+
+    // Returns the scene a specific actor is in, returns null if none
+    // Using this to avoid doing circular references with actors.
+    public static Scene? GetScene(Actor actor)
+    {
+        foreach(Scene scene in Scene.Scenes)
+        {
+            if(scene.HasActor(actor)) return scene;
+        }
+        return null;
     }
 }
