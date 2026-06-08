@@ -1,4 +1,5 @@
 ﻿using Raylib_cs;
+using System.Threading;
 
 static class Game
 {
@@ -6,8 +7,13 @@ static class Game
     const int HEIGHT = 600;
     const String TITLE = "Pusher";
     const int TARGET_FPS = 120;
+    const int PHYSICS_FRAMERATE = 240; 
+    static readonly int PHYSICS_FRAME_DURATION = 1000 / PHYSICS_FRAMERATE; // In Milliseconds
+    
     static readonly Color CLEAR_COLOR = Color.Black;
 
+    static bool PhysicsShouldStop = false;
+    static float lastFrameEnd = 0f;
 
     static void Main ()
     {
@@ -15,22 +21,50 @@ static class Game
         Raylib.SetTargetFPS(TARGET_FPS);
         Raylib.SetExitKey(KeyboardKey.Escape);
 
+        // Start physics thread
+        Thread physicsThread = new Thread(PhysicsUpdate);
+
+        physicsThread.Start();
         while(!Raylib.WindowShouldClose())
         {
             Update();
             Render();
         }
 
+        PhysicsShouldStop = true;
+        physicsThread.Join();
+
         Raylib.CloseWindow();
     }
 
     static void Update()
     {
-        
+        float delta = (float) Raylib.GetTime() - lastFrameEnd;
+
+        /** UPDATE GAME OBJECTS HERE **/
+
+        lastFrameEnd = (float) Raylib.GetTime();
     }
 
+    // Runs on a separate thread for physics objects, 
+    // ran in a constant rate instead of the varying framerate.
     static void PhysicsUpdate()
     {
+        float lastPhysicsFrameEnd = 0f;
+
+        float lastPhysicsFrameStart;
+        float delta = 1f;
+
+        while(!PhysicsShouldStop)
+        {
+            lastPhysicsFrameStart = (float) Raylib.GetTime();
+            delta = lastPhysicsFrameStart - lastPhysicsFrameEnd;
+
+            /** CALL GAME PHYSICS HERE **/
+
+            lastPhysicsFrameEnd = (float) Raylib.GetTime();
+            Thread.Sleep(PHYSICS_FRAME_DURATION);
+        }
         
     }
 
