@@ -1,4 +1,6 @@
-﻿using Game.Core;
+﻿using System.Numerics;
+using Game.Core;
+using Game.Actors;
 using Raylib_cs;
 namespace Game;
 
@@ -16,6 +18,10 @@ static class Game
     static bool PhysicsShouldStop = false;
     static float lastFrameEnd = 0f;
 
+    static Scene currentScene = new([
+        new Player(new(256,256))
+    ]);
+
     static void Main ()
     {
         Raylib.InitWindow(WIDTH, HEIGHT, TITLE);
@@ -24,6 +30,8 @@ static class Game
 
         // Start physics thread
         Thread physicsThread = new Thread(PhysicsUpdate);
+
+        currentScene.Start();
 
         physicsThread.Start();
         while(!Raylib.WindowShouldClose())
@@ -43,6 +51,7 @@ static class Game
         float delta = (float) Raylib.GetTime() - lastFrameEnd;
 
         /** UPDATE GAME OBJECTS HERE **/
+        currentScene.Update(delta);
 
         lastFrameEnd = (float) Raylib.GetTime();
     }
@@ -62,6 +71,7 @@ static class Game
             delta = lastPhysicsFrameStart - lastPhysicsFrameEnd;
 
             /** CALL GAME PHYSICS HERE **/
+            currentScene.PhysicsUpdate(delta);
 
             lastPhysicsFrameEnd = (float) Raylib.GetTime();
             Thread.Sleep(PHYSICS_FRAME_DURATION);
@@ -76,6 +86,7 @@ static class Game
         Raylib.BeginDrawing();
 
             /** CALL GAME RENDER CALLS HERE **/
+            currentScene.Render();
 
             Raylib.DrawFPS(0, 0);
 
