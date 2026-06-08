@@ -31,7 +31,7 @@ public abstract class PhysicsActor : Actor
         collider.position = relativePosition + position;
     }
 
-    public HashSet<Collider> MoveWithCollision(float delta)
+    public HashSet<Collider>? MoveWithCollision(Vector2 velocity, float delta)
     {
         HashSet<Collider> collisions = [];
         Vector2 movement = velocity * delta;
@@ -69,6 +69,8 @@ public abstract class PhysicsActor : Actor
         }
 
         position += movement;
+
+        if(collisions.Count == 0) return null;
 
         return collisions;
     }

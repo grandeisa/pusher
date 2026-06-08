@@ -2,6 +2,8 @@
 using Game.Core;
 using Game.Actors;
 using Raylib_cs;
+using Game.Physics;
+using Game.Scenes;
 namespace Game;
 
 static class Game
@@ -18,9 +20,7 @@ static class Game
     static bool PhysicsShouldStop = false;
     static float lastFrameEnd = 0f;
 
-    static Scene currentScene = new([
-        new Player(new(256,256))
-    ]);
+    static Scene currentScene = new TestScene();
 
     static void Main ()
     {
@@ -87,6 +87,12 @@ static class Game
 
             /** CALL GAME RENDER CALLS HERE **/
             currentScene.Render();
+
+            // Render colliders
+            foreach(Collider collider in PhysicsHandler.GetColliders())
+            {
+                Raylib.DrawRectangleLines((int)collider.position.X, (int)collider.position.Y, (int)collider.size.X, (int)collider.size.Y, Color.SkyBlue);
+            }
 
             Raylib.DrawFPS(0, 0);
 
